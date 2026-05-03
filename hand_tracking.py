@@ -96,7 +96,8 @@ landmarker = vision.HandLandmarker.create_from_options(options)
 arduino = serial.Serial('/dev/cu.usbmodem141011', 9600)
 time.sleep(2)  # Wait for Arduino to reset after serial connection
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(0, cv2.CAP_AVFOUNDATION)
+time.sleep(1)
 
 if not cap.isOpened():
     print("ERROR: Cannot open camera")
@@ -104,6 +105,10 @@ if not cap.isOpened():
     print("     Allow Terminal (or VS Code) camera access, then re-run.")
     landmarker.close()
     exit(1)
+
+# Warm up camera — macOS needs a few frames before it starts returning data
+for _ in range(5):
+    cap.read()
 
 print("Hand tracking with finger counting started. Press 'q' to quit.")
 
